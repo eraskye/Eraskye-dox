@@ -1,6 +1,9 @@
 (() => {
   "use strict";
 
+  // ⚠️ ОСЫ ЖЕРГЕ ӨЗІҢІЗДІҢ RENDER СІЛТЕМЕҢІЗДІ ҚОЙЫҢЫЗ (соңында / болмауы керек)
+  const API_BASE_URL = "https://YOUR-RENDER-APP.onrender.com";
+
   const DEVICE_KEY = "cloviss.device_id";
   const LICENSE_KEY = "cloviss.license_key";
 
@@ -111,7 +114,7 @@
     const device_id = getDeviceId();
     if (!silent) line("[license] checking…", "info");
     try {
-      const r = await fetch("/api/license/check", {
+      const r = await fetch(API_BASE_URL + "/api/license/check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ key, device_id }),
@@ -147,7 +150,7 @@
     $("btnSearch").disabled = true;
 
     try {
-      const r = await fetch("/api/search", {
+      const r = await fetch(API_BASE_URL + "/api/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -184,7 +187,7 @@
     line("[account] requesting /me…", "info");
     busy(true);
     try {
-      const r = await fetch("/api/account/me", {
+      const r = await fetch(API_BASE_URL + "/api/account/me", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ key, device_id: getDeviceId() }),
@@ -247,7 +250,7 @@
     if (stored) $("licKey").value = stored;
 
     try {
-      const r = await fetch("/api/health");
+      const r = await fetch(API_BASE_URL + "/api/health");
       const h = await r.json();
       $("sysStatus").classList.add("ok");
       $("sysStatus").innerHTML = '<span class="dot"></span> ONLINE';
