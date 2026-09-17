@@ -1,8 +1,7 @@
 (() => {
   "use strict";
 
-  // ⚠️ ОСЫ ЖЕРГЕ ӨЗІҢІЗДІҢ RENDER СІЛТЕМЕҢІЗДІ ҚОЙЫҢЫЗ (соңында / болмауы керек)
-  const API_BASE_URL = "https://YOUR-RENDER-APP.onrender.com";
+  const API_BASE_URL = "https://eraskye-dox.onrender.com";
 
   const DEVICE_KEY = "cloviss.device_id";
   const LICENSE_KEY = "cloviss.license_key";
