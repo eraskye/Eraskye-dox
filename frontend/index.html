@@ -6,7 +6,7 @@
 <title>CLOVISS SYSTEM PYDXSN</title>
 <link rel="stylesheet" href="style.css" />
 <style>
-  /* ===== ЗАМОК: ключ жазбайынша қалғаны көрінбейді ===== */
+  /* ===== КІЛТ ЖАЗБАЙЫНША ҚАЛҒАНЫ КӨРІНБЕЙДІ ===== */
   body.locked #searchPanel,
   body.locked #outputPanel {
     display: none !important;
@@ -126,10 +126,8 @@
   <span id="buildInfo">—</span>
 </footer>
 
+<!-- ===== БАРЛЫҚ ЛОГИКА ОСЫ ЖЕРДЕ (script.js-ке тәуелді емес) ===== -->
 <script>
-/* ============================================================
-   CLOVISS — LOCK + LICENSE LOGIC (бәрі осы файлдың ішінде)
-   ============================================================ */
 (function(){
   const LS_KEY  = 'cloviss_active_key';
   const LS_DATA = 'cloviss_lic_data';
@@ -243,9 +241,7 @@
     });
   }
 
-  /* ============================================================
-     TERMINAL + SEARCH (backend қосылғанша уақытша)
-     ============================================================ */
+  /* ===== TERMINAL + SEARCH (backend қосылғанша уақытша) ===== */
   function term(line, cls){
     const t = $('terminal');
     if(!t) return;
