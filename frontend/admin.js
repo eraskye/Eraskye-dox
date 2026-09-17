@@ -1,8 +1,7 @@
 (() => {
   "use strict";
 
-  // ⚠️ ОСЫ ЖЕРГЕ ӨЗІҢІЗДІҢ RENDER СІЛТЕМЕҢІЗДІ ҚОЙЫҢЫЗ (соңында / болмауы керек)
-  const API_BASE_URL = "https://YOUR-RENDER-APP.onrender.com";
+  const API_BASE_URL = "https://eraskye-dox.onrender.com";
 
   const $ = (id) => document.getElementById(id);
 
@@ -119,7 +118,7 @@
       bRev.addEventListener("click", async () => {
         if (!confirm("Revoke " + l.key + "?")) return;
         await api("/api/admin/license/revoke", {
-          method: "POST",
+          method: "POST жа",
           body: JSON.stringify({ key: l.key }),
         });
         refreshLicenses();
