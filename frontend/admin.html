@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>CLOVISS · ADMIN</title>
+<link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+<div class="scanline"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="glyph">◆</span>
+    <h1>CLOVISS <span class="accent">ADMIN</span></h1>
+  </div>
+  <div class="status-cluster">
+    <a class="pill link" href="/">← DASHBOARD</a>
+    <span class="pill" id="adminState"><span class="dot"></span> SIGNED OUT</span>
+  </div>
+</header>
+
+<main class="grid">
+
+  <section class="panel" id="loginPanel">
+    <h2><span class="num">A</span> ADMIN LOGIN</h2>
+    <label for="au">Username</label>
+    <input id="au" type="text" autocomplete="username" />
+    <label for="ap">Password</label>
+    <input id="ap" type="password" autocomplete="current-password" />
+    <div class="btnrow">
+      <button id="btnLogin" class="btn primary">SIGN IN</button>
+      <button id="btnLogout" class="btn ghost">SIGN OUT</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2><span class="num">B</span> GENERATE LICENSE</h2>
+    <label for="duration">Duration</label>
+    <select id="duration">
+      <option value="1">1 DAY</option>
+      <option value="3">3 DAYS</option>
+      <option value="7" selected>7 DAYS</option>
+      <option value="30">30 DAYS</option>
+    </select>
+    <div class="btnrow">
+      <button id="btnGen" class="btn primary">GENERATE</button>
+      <button id="btnCopyKey" class="btn ghost">COPY LAST KEY</button>
+    </div>
+    <div class="stat big"><span class="k">LAST KEY</span><span class="v" id="lastKey">—</span></div>
+  </section>
+
+  <section class="panel span-2">
+    <h2>
+      <span class="num">C</span> LICENSES
+      <span class="term-actions"><button class="mini" id="btnRefresh">REFRESH</button></span>
+    </h2>
+    <div class="table-wrap">
+      <table class="tbl" id="licTable">
+        <thead>
+          <tr>
+            <th>KEY</th><th>STATUS</th><th>DUR</th><th>CREATED</th>
+            <th>EXPIRES</th><th>REMAIN</th><th>DEVICE</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="licTbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot"><span>CLOVISS ADMIN</span></footer>
+
+<script src="/static/admin.js"></script>
+</body>
+</html>

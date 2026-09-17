@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>CLOVISS SYSTEM PYDXSN</title>
+<link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+<div class="scanline"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="glyph">◆</span>
+    <h1>CLOVISS SYSTEM <span class="accent">PYDXSN</span></h1>
+  </div>
+  <div class="status-cluster">
+    <span class="pill" id="sysStatus"><span class="dot"></span> ONLINE</span>
+    <span class="pill" id="licStatusPill"><span class="dot"></span> NO LICENSE</span>
+    <a class="pill link" href="/admin">ADMIN</a>
+  </div>
+</header>
+
+<main class="grid">
+
+  <!-- LICENSE PANEL -->
+  <section class="panel" id="licensePanel">
+    <h2><span class="num">01</span> LICENSE</h2>
+
+    <label for="licKey">License Key</label>
+    <input id="licKey" type="text" placeholder="CLV-XXXXX-XXXXX-XXXXX-XXXXX" autocomplete="off" spellcheck="false" />
+
+    <div class="btnrow">
+      <button id="btnActivate" class="btn primary">ACTIVATE</button>
+      <button id="btnClearLic" class="btn ghost">CLEAR</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><span class="k">STATUS</span><span class="v" id="licState">—</span></div>
+      <div class="stat"><span class="k">EXPIRES</span><span class="v" id="licExpires">—</span></div>
+      <div class="stat"><span class="k">REMAINING</span><span class="v" id="licRemaining">—</span></div>
+      <div class="stat"><span class="k">DEVICE</span><span class="v" id="devState">UNBOUND</span></div>
+    </div>
+
+    <p class="hint">1 license = 1 device. First activation permanently binds the key.</p>
+  </section>
+
+  <!-- SEARCH PANEL -->
+  <section class="panel" id="searchPanel">
+    <h2><span class="num">02</span> SEARCH</h2>
+
+    <label for="searchType">Search Type</label>
+    <select id="searchType">
+      <option value="number">NUMBER — phone number lookup</option>
+      <option value="vks">VKS — VK lookup</option>
+      <option value="sherlock">SHERLOCK — Telegram / username</option>
+    </select>
+
+    <label for="query">Query</label>
+    <input id="query" type="text" placeholder="e.g. 77001234567" autocomplete="off" spellcheck="false" />
+
+    <label for="page">Page</label>
+    <input id="page" type="number" min="1" value="1" />
+
+    <div class="btnrow">
+      <button id="btnSearch" class="btn primary">SEARCH</button>
+      <button id="btnClearSearch" class="btn ghost">CLEAR</button>
+    </div>
+
+    <div class="btnrow small">
+      <button id="btnMe" class="btn ghost wide">ACCOUNT / KEY INFO</button>
+    </div>
+  </section>
+
+  <!-- OUTPUT PANEL -->
+  <section class="panel terminal-panel" id="outputPanel">
+    <h2>
+      <span class="num">03</span> OUTPUT
+      <span class="term-actions">
+        <button class="mini" id="btnCopy">COPY</button>
+        <button class="mini" id="btnClearOut">CLEAR</button>
+      </span>
+    </h2>
+
+    <div class="terminal" id="terminal">
+      <div class="term-line muted">[cloviss] ready.</div>
+    </div>
+
+    <div class="progress" id="progress"><div class="bar"></div></div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <span>CLOVISS SYSTEM PYDXSN · v1.0</span>
+  <span id="buildInfo">—</span>
+</footer>
+
+<script src="/static/script.js"></script>
+</body>
+</html>
