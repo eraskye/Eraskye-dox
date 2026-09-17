@@ -36,31 +36,32 @@ a{color:inherit;text-decoration:none}
 .topbar{
   position:sticky;top:0;z-index:5;
   display:flex;justify-content:space-between;align-items:center;
-  padding:14px 20px;
+  padding:14px 20px;gap:10px;
   border-bottom:1px solid var(--border);
   background:rgba(6,10,14,.85);
   backdrop-filter: blur(8px);
 }
-.brand{display:flex;align-items:center;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
 .brand .glyph{color:var(--accent);font-size:18px}
-.brand h1{font-size:14px;letter-spacing:2px;margin:0;font-weight:600}
+.brand h1{font-size:14px;letter-spacing:2px;margin:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .accent{color:var(--accent)}
 
-.status-cluster{display:flex;gap:8px;flex-wrap:wrap}
+.status-cluster{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .pill{
   font-family:var(--mono);font-size:11px;letter-spacing:1px;
   border:1px solid var(--border);border-radius:999px;
   padding:6px 10px;color:var(--muted);
   display:inline-flex;align-items:center;gap:6px;
+  background:transparent;cursor:pointer;
 }
 .pill.link:hover{border-color:var(--accent);color:var(--accent)}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--muted)}
 .pill.ok .dot{background:var(--accent);box-shadow:0 0 8px var(--accent)}
 .pill.err .dot{background:var(--danger);box-shadow:0 0 8px var(--danger)}
 .pill.warn .dot{background:var(--warn);box-shadow:0 0 8px var(--warn)}
-.pill.ok{color:var(--accent)}
-.pill.err{color:var(--danger)}
-.pill.warn{color:var(--warn)}
+.pill.ok{color:var(--accent);border-color:rgba(0,229,168,.35)}
+.pill.err{color:var(--danger);border-color:rgba(255,77,106,.35)}
+.pill.warn{color:var(--warn);border-color:rgba(255,181,71,.35)}
 
 .grid{
   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
@@ -185,3 +186,14 @@ input[type=number]{-moz-appearance:textfield}
 .tbl button{font-family:var(--mono);font-size:10px;padding:4px 8px;border-radius:4px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted)}
 .tbl button:hover{border-color:var(--accent);color:var(--accent)}
 .tbl button.danger:hover{border-color:var(--danger);color:var(--danger)}
+
+/* ===== LICENSE MSG (index + admin) ===== */
+.license-msg {
+  margin-top: 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .5px;
+  min-height: 16px;
+}
+.license-msg.ok { color: var(--accent); }
+.license-msg.err { color: var(--danger); }
