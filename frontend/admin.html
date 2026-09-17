@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>CLOVISS · ADMIN</title>
-<link rel="stylesheet" href="/static/style.css" />
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
 <div class="scanline"></div>
@@ -15,7 +15,7 @@
     <h1>CLOVISS <span class="accent">ADMIN</span></h1>
   </div>
   <div class="status-cluster">
-    <a class="pill link" href="/">← DASHBOARD</a>
+    <a class="pill link" href="index.html">← DASHBOARD</a>
     <span class="pill" id="adminState"><span class="dot"></span> SIGNED OUT</span>
   </div>
 </header>
@@ -32,6 +32,7 @@
       <button id="btnLogin" class="btn primary">SIGN IN</button>
       <button id="btnLogout" class="btn ghost">SIGN OUT</button>
     </div>
+    <div class="license-msg" id="adminMsg"></div>
   </section>
 
   <section class="panel">
@@ -63,15 +64,119 @@
             <th>EXPIRES</th><th>REMAIN</th><th>DEVICE</th><th></th>
           </tr>
         </thead>
-        <tbody id="licTbody"></tbody>
+        <tbody id="licTbody">
+          <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:20px;">— әзірге деректер жоқ —</td></tr>
+        </tbody>
       </table>
     </div>
   </section>
 
 </main>
 
-<footer class="foot"><span>CLOVISS ADMIN</span></footer>
+<footer class="foot"><span>CLOVISS ADMIN · v1.0</span></footer>
 
-<script src="/static/admin.js"></script>
+<script>
+(function(){
+  const $ = (id) => document.getElementById(id);
+  const BACKEND = ''; // Кейінірек Render сілтемесін қоямыз
+
+  function setMsg(text, type){
+    const el = $('adminMsg');
+    if(!el) return;
+    el.textContent = text || '';
+    el.className = 'license-msg' + (type ? ' ' + type : '');
+  }
+
+  // ===== LOGIN =====
+  const btnLogin = $('btnLogin');
+  if(btnLogin){
+    btnLogin.addEventListener('click', async () => {
+      const u = ($('au').value || '').trim();
+      const p = ($('ap').value || '').trim();
+      if(!u || !p){ setMsg('Логин мен құпиясөзді енгізіңіз', 'err'); return; }
+
+      setMsg('Кіру...', '');
+      btnLogin.disabled = true;
+      await new Promise(r => setTimeout(r, 500));
+      btnLogin.disabled = false;
+
+      const pill = $('adminState');
+      pill.className = 'pill ok';
+      pill.innerHTML = '<span class="dot"></span> SIGNED IN';
+      setMsg('Сәтті кірдіңіз ✓', 'ok');
+    });
+  }
+
+  // ===== LOGOUT =====
+  const btnLogout = $('btnLogout');
+  if(btnLogout){
+    btnLogout.addEventListener('click', () => {
+      $('au').value = '';
+      $('ap').value = '';
+      const pill = $('adminState');
+      pill.className = 'pill';
+      pill.innerHTML = '<span class="dot"></span> SIGNED OUT';
+      setMsg('Шықтыңыз', '');
+    });
+  }
+
+  // ===== GENERATE =====
+  const btnGen = $('btnGen');
+  if(btnGen){
+    btnGen.addEventListener('click', async () => {
+      const dur = $('duration').value;
+      btnGen.disabled = true;
+
+      function rnd(len){
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let s = '';
+        for(let i=0;i<len;i++) s += chars[Math.floor(Math.random()*chars.length)];
+        return s;
+      }
+      const key = `CLV-${rnd(5)}-${rnd(5)}-${rnd(5)}-${rnd(5)}`;
+
+      await new Promise(r => setTimeout(r, 500));
+      $('lastKey').textContent = key;
+      $('lastKey').className = 'v ok';
+      btnGen.disabled = false;
+
+      // Кестеге қосу
+      const tbody = $('licTbody');
+      if(tbody.querySelector('td[colspan]')) tbody.innerHTML = '';
+      const tr = document.createElement('tr');
+      const now = new Date().toISOString().slice(0,10);
+      tr.innerHTML = `
+        <td>${key}</td>
+        <td class="s-unused">UNUSED</td>
+        <td>${dur}d</td>
+        <td>${now}</td>
+        <td>—</td>
+        <td>—</td>
+        <td>—</td>
+        <td class="act"><button class="danger" onclick="this.closest('tr').remove()">DEL</button></td>
+      `;
+      tbody.prepend(tr);
+    });
+  }
+
+  // ===== COPY LAST KEY =====
+  const btnCopyKey = $('btnCopyKey');
+  if(btnCopyKey){
+    btnCopyKey.addEventListener('click', () => {
+      const k = $('lastKey').textContent;
+      if(k && k !== '—') navigator.clipboard.writeText(k).catch(()=>{});
+    });
+  }
+
+  // ===== REFRESH =====
+  const btnRefresh = $('btnRefresh');
+  if(btnRefresh){
+    btnRefresh.addEventListener('click', () => {
+      setMsg('Жаңартылды', 'ok');
+      setTimeout(() => setMsg(''), 1500);
+    });
+  }
+})();
+</script>
 </body>
 </html>
