@@ -4,6 +4,7 @@ import logging
 from functools import wraps
 
 from flask import Flask, request, jsonify, send_from_directory, session
+from flask_cors import CORS
 
 # Allow running as `python backend/app.py`
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -27,6 +28,24 @@ FRONTEND_DIR = os.path.join(os.path.dirname(BASE_DIR), "frontend")
 
 app = Flask(__name__, static_folder=FRONTEND_DIR, static_url_path="/static")
 app.secret_key = os.environ.get("SECRET_KEY") or "cloviss-dev-insecure-secret"
+
+# Cross-domain session cookie settings (Vercel <-> Render)
+app.config.update(
+    SESSION_COOKIE_SAMESITE="None",
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_HTTPONLY=True,
+)
+
+# Allow Vercel frontend to call this API
+CORS(
+    app,
+    supports_credentials=True,
+    origins=[
+        "https://eraskye-dox.vercel.app",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
+)
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(levelname)s %(message)s")
 log = logging.getLogger("cloviss")
@@ -162,6 +181,7 @@ def admin_login():
         return jsonify({"ok": False, "error": "ADMIN_NOT_CONFIGURED"}), 500
     if u == expected_u and p == expected_p:
         session["admin"] = True
+        session.permanent = True
         return jsonify({"ok": True})
     return jsonify({"ok": False, "error": "INVALID_CREDENTIALS"}), 401
 
