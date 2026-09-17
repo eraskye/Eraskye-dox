@@ -5,35 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>CLOVISS SYSTEM PYDXSN</title>
 <link rel="stylesheet" href="style.css" />
-<style>
-  /* ===== КІЛТ ЖАЗБАЙЫНША ҚАЛҒАНЫ КӨРІНБЕЙДІ ===== */
-  body.locked #searchPanel,
-  body.locked #outputPanel {
-    display: none !important;
-  }
-  body.locked .grid {
-    grid-template-columns: 1fr;
-    max-width: 560px;
-    margin: 40px auto;
-  }
-  body:not(.locked) #licensePanel {
-    display: none; /* Кілт жазылған соң кілт терезесі жасырылады */
-  }
-  body:not(.locked) #btnReset {
-    display: inline-flex !important;
-  }
-  .license-msg {
-    margin-top: 12px;
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: .5px;
-    min-height: 16px;
-  }
-  .license-msg.ok { color: var(--accent); }
-  .license-msg.err { color: var(--danger); }
-</style>
 </head>
-<body class="locked">
+<body>
 <div class="scanline"></div>
 
 <header class="topbar">
@@ -42,16 +15,15 @@
     <h1>CLOVISS SYSTEM <span class="accent">PYDXSN</span></h1>
   </div>
   <div class="status-cluster">
-    <span class="pill" id="sysStatus"><span class="dot"></span> ONLINE</span>
+    <span class="pill" id="sysStatus"><span class="dot"></span> ...</span>
     <span class="pill" id="licStatusPill"><span class="dot"></span> NO LICENSE</span>
-    <button class="pill link" id="btnReset" style="display:none; cursor:pointer; background:transparent; font-family:var(--mono);">SIGN OUT</button>
     <a class="pill link" href="admin.html">ADMIN</a>
   </div>
 </header>
 
 <main class="grid">
 
-  <!-- LICENSE PANEL — басында тек осы көрінеді -->
+  <!-- LICENSE PANEL -->
   <section class="panel" id="licensePanel">
     <h2><span class="num">01</span> LICENSE ACTIVATION</h2>
 
@@ -63,8 +35,6 @@
       <button id="btnClearLic" class="btn ghost">CLEAR</button>
     </div>
 
-    <div class="license-msg" id="licMsg"></div>
-
     <div class="stats">
       <div class="stat"><span class="k">STATUS</span><span class="v" id="licState">—</span></div>
       <div class="stat"><span class="k">EXPIRES</span><span class="v" id="licExpires">—</span></div>
@@ -75,7 +45,7 @@
     <p class="hint">1 license = 1 device. First activation permanently binds the key.</p>
   </section>
 
-  <!-- SEARCH PANEL — тек кілттен кейін көрінеді -->
+  <!-- SEARCH PANEL -->
   <section class="panel" id="searchPanel">
     <h2><span class="num">02</span> SEARCH</h2>
 
@@ -102,7 +72,7 @@
     </div>
   </section>
 
-  <!-- OUTPUT PANEL — тек кілттен кейін көрінеді -->
+  <!-- OUTPUT PANEL -->
   <section class="panel terminal-panel" id="outputPanel">
     <h2>
       <span class="num">03</span> OUTPUT
@@ -126,173 +96,6 @@
   <span id="buildInfo">—</span>
 </footer>
 
-<!-- ===== БАРЛЫҚ ЛОГИКА ОСЫ ЖЕРДЕ (script.js-ке тәуелді емес) ===== -->
-<script>
-(function(){
-  const LS_KEY  = 'cloviss_active_key';
-  const LS_DATA = 'cloviss_lic_data';
-  const $ = (id) => document.getElementById(id);
-
-  function setMsg(text, type){
-    const el = $('licMsg');
-    if(!el) return;
-    el.textContent = text || '';
-    el.className = 'license-msg' + (type ? ' ' + type : '');
-  }
-
-  function unlock(data){
-    document.body.classList.remove('locked');
-    const pill = $('licStatusPill');
-    if(pill){ pill.className = 'pill ok'; pill.innerHTML = '<span class="dot"></span> LICENSED'; }
-    const ls = $('licState'); if(ls){ ls.textContent = 'ACTIVE'; ls.className = 'v ok'; }
-    const ds = $('devState'); if(ds){ ds.textContent = 'BOUND';  ds.className = 'v ok'; }
-    if(data){
-      if(data.expires)   $('licExpires').textContent   = data.expires;
-      if(data.remaining) $('licRemaining').textContent = data.remaining;
-    }
-  }
-
-  function lock(){
-    document.body.classList.add('locked');
-    const pill = $('licStatusPill');
-    if(pill){ pill.className = 'pill err'; pill.innerHTML = '<span class="dot"></span> NO LICENSE'; }
-  }
-
-  // Формат тексеру: CLV-XXXXX-XXXXX-XXXXX-XXXXX
-  function isValidFormat(key){
-    return /^CLV-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}$/i.test(key.trim());
-  }
-
-  // Бет ашылғанда тексеру
-  const saved = localStorage.getItem(LS_KEY);
-  if(saved){
-    let data = null;
-    try { data = JSON.parse(localStorage.getItem(LS_DATA) || 'null'); } catch(e){}
-    unlock(data);
-  } else {
-    lock();
-  }
-
-  // ===== ACTIVATE батырмасы =====
-  const btnActivate = $('btnActivate');
-  if(btnActivate){
-    btnActivate.addEventListener('click', async () => {
-      const key = ($('licKey').value || '').trim().toUpperCase();
-      if(!key){ setMsg('Кілтті енгізіңіз / Введите ключ', 'err'); return; }
-
-      if(!isValidFormat(key)){
-        setMsg('Қате формат. Мысалы: CLV-AAAAA-BBBBB-CCCCC-DDDDD', 'err');
-        return;
-      }
-
-      setMsg('Тексеру жүріп жатыр...', '');
-      btnActivate.disabled = true;
-
-      let ok = false, data = null;
-      try {
-        // ===== BACKEND бар болса — осы жерге Render сілтемесін қой =====
-        const BACKEND = ''; // мысалы: 'https://cloviss-backend.onrender.com'
-        if(BACKEND){
-          const res = await fetch(BACKEND + '/api/license/activate', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ key })
-          });
-          const json = await res.json();
-          if(res.ok && json.ok){ ok = true; data = json; }
-          else { setMsg(json.error || 'Кілт жарамсыз', 'err'); }
-        } else {
-          // Backend әлі жоқ болса — уақытша жергілікті тексеру
-          await new Promise(r => setTimeout(r, 600));
-          ok = true;
-          data = { key, status:'ACTIVE', expires:'—', remaining:'—' };
-        }
-      } catch(e){
-        setMsg('Желі қатесі: ' + e.message, 'err');
-      }
-
-      btnActivate.disabled = false;
-
-      if(ok){
-        localStorage.setItem(LS_KEY, key);
-        localStorage.setItem(LS_DATA, JSON.stringify(data));
-        setMsg('Кілт қабылданды ✓', 'ok');
-        setTimeout(() => unlock(data), 400);
-      }
-    });
-  }
-
-  // CLEAR
-  const btnClearLic = $('btnClearLic');
-  if(btnClearLic){
-    btnClearLic.addEventListener('click', () => {
-      $('licKey').value = '';
-      setMsg('');
-    });
-  }
-
-  // RESET / SIGN OUT
-  const btnReset = $('btnReset');
-  if(btnReset){
-    btnReset.addEventListener('click', () => {
-      localStorage.removeItem(LS_KEY);
-      localStorage.removeItem(LS_DATA);
-      location.reload();
-    });
-  }
-
-  /* ===== TERMINAL + SEARCH (backend қосылғанша уақытша) ===== */
-  function term(line, cls){
-    const t = $('terminal');
-    if(!t) return;
-    const d = document.createElement('div');
-    d.className = 'term-line' + (cls ? ' ' + cls : '');
-    d.textContent = line;
-    t.appendChild(d);
-    t.scrollTop = t.scrollHeight;
-  }
-
-  const btnSearch = $('btnSearch');
-  if(btnSearch){
-    btnSearch.addEventListener('click', async () => {
-      const type = $('searchType').value;
-      const q = ($('query').value || '').trim();
-      if(!q){ term('[!] Сұраныс енгізіңіз', 'err'); return; }
-      term('> ' + type.toUpperCase() + ' :: ' + q, 'info');
-      term('[*] Сұраныс жіберілуде...', 'muted');
-      await new Promise(r => setTimeout(r, 800));
-      term('[!] Backend әлі қосылмаған. Кейінірек Render-ге шығарамыз.', 'warn');
-    });
-  }
-
-  const btnClearSearch = $('btnClearSearch');
-  if(btnClearSearch){
-    btnClearSearch.addEventListener('click', () => {
-      $('query').value = '';
-      $('page').value = '1';
-    });
-  }
-
-  const btnClearOut = $('btnClearOut');
-  if(btnClearOut){
-    btnClearOut.addEventListener('click', () => {
-      const t = $('terminal');
-      if(t){ t.innerHTML = '<div class="term-line muted">[cloviss] ready.</div>'; }
-    });
-  }
-
-  const btnCopy = $('btnCopy');
-  if(btnCopy){
-    btnCopy.addEventListener('click', () => {
-      const t = $('terminal');
-      if(!t) return;
-      navigator.clipboard.writeText(t.innerText).catch(()=>{});
-    });
-  }
-
-  const bi = $('buildInfo');
-  if(bi){ bi.textContent = new Date().toISOString().slice(0,10); }
-})();
-</script>
+<script src="script.js"></script>
 </body>
 </html>
