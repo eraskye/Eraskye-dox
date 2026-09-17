@@ -1,5 +1,9 @@
 (() => {
   "use strict";
+
+  // ⚠️ ОСЫ ЖЕРГЕ ӨЗІҢІЗДІҢ RENDER СІЛТЕМЕҢІЗДІ ҚОЙЫҢЫЗ (соңында / болмауы керек)
+  const API_BASE_URL = "https://YOUR-RENDER-APP.onrender.com";
+
   const $ = (id) => document.getElementById(id);
 
   function setState(signed) {
@@ -10,8 +14,8 @@
   }
 
   async function api(path, opts = {}) {
-    const r = await fetch(path, {
-      credentials: "same-origin",
+    const r = await fetch(API_BASE_URL + path, {
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       ...opts,
     });
